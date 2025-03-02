@@ -7,7 +7,7 @@ class Users(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name=Column(String, nullable=False)
-    mail=Column(String, nullable=False)
+    email=Column(String, nullable=False)
     password=Column(String, nullable=False)
 
     tasks = relationship("Tasks", back_populates="user", cascade="all, delete")

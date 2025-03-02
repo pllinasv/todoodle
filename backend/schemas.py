@@ -3,8 +3,7 @@ from typing import Optional
 
 class UsersBase(BaseModel):
     name: str
-    email: EmailStr
-
+    email: str
 
 class UsersCreate(UsersBase):
     password: str
@@ -16,15 +15,13 @@ class UserResponse(UsersBase):
         from_attributes = True
 
 class TaskBase(BaseModel):
-    userId: int
-    title: str[str]
-    description: Optional[str] = None
-    completed: Optional[bool] = None
+    UserId: int
+    title: str
+    description: Optional[str]=None
+    completed: bool=False
 
 
 class TaskResponse(UsersBase):
     id: int
     class Config:
         from_attributes = True
-
-

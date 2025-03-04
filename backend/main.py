@@ -58,7 +58,7 @@ def update_user(id:int, user: UserResponse,db:Session=Depends(get_db)):
     update_user=user.model_dump(exclude_unset=True)
 
     if "id" in update_user:
-        update_user.pop("id")
+        update_user.pop("id")   
 
     for key, value in update_user():
         setattr(user, key, value)
@@ -70,7 +70,7 @@ def update_user(id:int, user: UserResponse,db:Session=Depends(get_db)):
 
 
 
-@app.post("/create-task/", tags=["Task"])
+@app.post("/task/", tags=["Task"])
 def create_task(task: TaskBase, db: Session = Depends(get_db)):
     new_task = models.Tasks(**task.model_dump())
     db.add(new_task)
@@ -79,6 +79,33 @@ def create_task(task: TaskBase, db: Session = Depends(get_db)):
     return {"message": "✅ Tarea creada con éxito", "task": new_task}
 
 
-@app.get("/show-tasks", tags=["Task"])
+@app.get("/task/", tags=["Task"])
 def get_tasks(db: Session = Depends(get_db)):
     return db.query(models.Tasks).all()
+
+@app.delete("/task/", tags=["Task"])
+def delete_tasks(db:Session = Depends(get_db)):
+    db.query(models.Tasks).delete()
+    db.commit()
+
+@app.get("/task/{id}", tags=["Task"])
+def get_task(id:int, db: Session = Depends(get_db)):
+    return db.query(models.Tasks).filter_by(id=id).first()    
+
+@app.delete("/task/{id}", tags=["Task"])
+def delete_task(id:int, db:Session = Depends(get_db)):
+    db.query(models.Tasks).filter_by(id=id).delete()
+    db.commit()
+
+@app.get("/task-user/{user_id}", tags=["Task"])
+def get_user_tasks(user_id:int, db:Session = Depends(get_db)):
+    return db.query(models.Tasks).filter(models.Tasks.UserId==user_id).all()   
+
+@app.delete("/task-user/{user_id}", tags=["Task"])
+def remove_all_tasks_from_user(user_id:int, db:Session = Depends(get_db)):
+    db.query(models.Tasks).filter(models.Tasks.UserId==user_id).delete()
+    db.commit()
+
+@app.put("/task/{id}", tags=["Task"])
+def update_task(id:int, db:Session = Depends(get_db)):
+    pass

@@ -50,24 +50,24 @@ def delete_user(id:int, db:Session=Depends(get_db)):
     db.commit()
 
 @app.put("/user/{id}", tags=["User"])
-def update_user(id:int, user: UserResponse,db:Session=Depends(get_db)):
-    person=db.query(models.Users).filter_by(id=id).first()
-    if not person:
-        return{"message": "User does not exist."}
+def update_user(id: int, user: UserResponse, db: Session = Depends(get_db)):
+    person = db.query(models.Users).filter(models.Users.id == id).first()
     
-    update_user=user.model_dump(exclude_unset=True)
+    if not person:
+        return {"message": "User does not exist."}
+    
+    update_user_data = user.model_dump(exclude_unset=True)
 
-    if "id" in update_user:
-        update_user.pop("id")   
-
-    for key, value in update_user():
-        setattr(user, key, value)
-
+    if "id" in update_user_data:
+        update_user_data.pop("id") 
+    
+    for key, value in update_user_data.items():
+        setattr(person, key, value)
+    
     db.commit()
-    db.refresh(user)
+    db.refresh(person)
 
-
-
+    return {"message": "User updated successfully", "user": person}
 
 
 @app.post("/task/", tags=["Task"])
@@ -97,15 +97,25 @@ def delete_task(id:int, db:Session = Depends(get_db)):
     db.query(models.Tasks).filter_by(id=id).delete()
     db.commit()
 
-@app.get("/task-user/{user_id}", tags=["Task"])
+@app.get("/task-user/{user_id}", tags=["Task-User"])
 def get_user_tasks(user_id:int, db:Session = Depends(get_db)):
     return db.query(models.Tasks).filter(models.Tasks.UserId==user_id).all()   
 
-@app.delete("/task-user/{user_id}", tags=["Task"])
+@app.delete("/task-user/{user_id}", tags=["Task-User"])
 def remove_all_tasks_from_user(user_id:int, db:Session = Depends(get_db)):
     db.query(models.Tasks).filter(models.Tasks.UserId==user_id).delete()
     db.commit()
 
 @app.put("/task/{id}", tags=["Task"])
-def update_task(id:int, db:Session = Depends(get_db)):
-    pass
+def update_task(id:int, tasks: TaskResponse,db:Session = Depends(get_db)):
+    task= db.query(models.Tasks).filter(models.Tasks.id==id).first()
+    if not task:
+        return {"message": "Task does not exist."}
+    update_task_data=tasks.model_dump(exclude_unset=True)
+    if "id" in update_task_data:
+        update_task_data.pop("id")
+    for key, value in update_task_data.items():
+        setattr(task, key, value) 
+    
+    db.commit()
+    db.refresh(task)

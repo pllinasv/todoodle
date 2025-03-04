@@ -10,6 +10,7 @@ class UsersCreate(UsersBase):
 
 class UserResponse(UsersBase):
     id: int
+    password: str
 
     class Config:
         from_attributes = True
@@ -21,7 +22,7 @@ class TaskBase(BaseModel):
     completed: bool=False
 
 
-class TaskResponse(UsersBase):
+class TaskResponse(TaskBase):
     id: int
     class Config:
         from_attributes = True

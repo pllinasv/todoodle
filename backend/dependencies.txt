@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-sqlalchemy
-pydantic
-alembic??
-psycopg2??
-psycopg2-binary
